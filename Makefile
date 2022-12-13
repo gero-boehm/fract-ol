@@ -1,7 +1,7 @@
 CC=cc
 CFLAGS=-Wall -Wextra -Werror -IMLX42/include -Iinclude
 NAME=libft.a
-SRC=vec2.c
+SRC=vec2.c uniforms.c
 OBJ=$(SRC:.c=.o)
 LIBS=MLX42/libmlx42.a -lglfw -L "/Users/$$USER/.brew/opt/glfw/lib/" -framework Cocoa -framework OpenGL -framework IOKit
 

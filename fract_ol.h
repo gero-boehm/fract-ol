@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 14:40:49 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/12 17:43:08 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/13 09:18:51 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,34 @@
 # define DEFAULT_ITERATIONS 100
 # define DEFAULT_WIDTH 512
 # define DEFAULT_HEIGHT 512
-# define DEFAULT_COLOR 0
+
+typedef enum e_renderer {
+	RENDERER_CPU,
+	RENDERER_GPU_DOUBLE,
+	RENDERER_GPU_FLOAT,
+}	t_renderer;
+
+typedef enum e_type {
+	TYPE_MANDELBROT,
+	TYPE_TRICORN,
+	TYPE_BURNING_SHIP,
+}	t_type;
+
+typedef enum e_subtype {
+	SUBTYPE_MANDELBROT,
+	SUBTYPE_JULIA,
+}	t_subtype;
 
 typedef struct s_vec2 {
 	double	x;
 	double	y;
 }	t_vec2;
+
+typedef struct s_settings {
+	t_renderer	renderer;
+	t_type		type;
+	t_subtype	subtype;
+}	t_settings;
 
 typedef struct s_scene {
 	mlx_t		*mlx;
@@ -35,7 +57,8 @@ typedef struct s_scene {
 	t_vec2		mouse;
 	t_vec2		offset;
 	int			iterations;
-	float		color;
+	float		time;
+	t_settings	settings;
 }	t_scene;
 
 t_vec2	vec2(double x, double y);
@@ -44,5 +67,8 @@ t_vec2	vec2_sub(t_vec2 v1, t_vec2 v2);
 t_vec2	vec2_div_scalar(t_vec2 v, double s);
 t_vec2	vec2_mult_scalar(t_vec2 v, double s);
 
+void	set_offset_uniform(mlx_t *mlx, t_vec2 *offset);
+void	set_aspect_uniform(mlx_t *mlx, double aspect);
+void	set_zoom_uniform(mlx_t *mlx, double zoom);
 
 #endif
