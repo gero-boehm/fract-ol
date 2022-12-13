@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 14:40:49 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/13 09:18:51 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/13 16:55:01 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,5 +70,13 @@ t_vec2	vec2_mult_scalar(t_vec2 v, double s);
 void	set_offset_uniform(mlx_t *mlx, t_vec2 *offset);
 void	set_aspect_uniform(mlx_t *mlx, double aspect);
 void	set_zoom_uniform(mlx_t *mlx, double zoom);
+
+t_vec2	mandelbrot(t_vec2 z, t_vec2 c);
+t_vec2	tricorn(t_vec2 z, t_vec2 c);
+t_vec2	burning_ship(t_vec2 z, t_vec2 c);
+
+t_vec2	complex_multiply(t_vec2 z1, t_vec2 z2);
+t_vec2	complex_add(t_vec2 z1, t_vec2 z2);
+double	complex_modulus_squared(t_vec2 z);
 
 #endif

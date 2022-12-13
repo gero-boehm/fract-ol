@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/17 22:34:59 by W2wizard          #+#    #+#             */
-/*   Updated: 2022/12/13 09:55:43 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/13 16:04:32 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 const char* frag_shader = "#version 400\n"
 	"precision highp double;\n"
-	// "precision highp float;\n"
+	"precision highp float;\n"
 	"in vec2 TexCoord;\n"
 	"flat in int TexIndex;\n"
 	"out vec4 FragColor;\n"
@@ -54,7 +54,7 @@ const char* frag_shader = "#version 400\n"
 	"	vec3 rgb;\n"
 	"	\n"
 	"	if (hsl.y == 0.0) {\n"
-	"		rgb = vec3(hsl.z); // Luminance\n"
+	"		rgb = vec3(hsl.z);\n"
 	"	} else {\n"
 	"		float f2;\n"
 	"		\n"
@@ -223,6 +223,7 @@ const char* frag_shader = "#version 400\n"
 	"		}\n"
 	"		result = iterate(z, c);\n"
 	"	}\n"
-	"	vec3 color = mix(vec3(0., 0., 0.), hsl2rgb(mod(time, 1.), 1., .5), float(result) / 100.);\n"
+	"	vec3 color = mix(vec3(0., 0., 0.), hsl2rgb(mod(time, 1.), 1., .5), float(result) / float(iterations));\n"
+	// "	vec3 color = mix(vec3(0., 0., 0.), hsl2rgb(mod(time, 1.), 1., .5), mod(float(result) / 10. + time, 10.));\n"
 	"	FragColor = vec4(color, 1.0);\n"
 	"}\n";

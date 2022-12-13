@@ -112,9 +112,46 @@ void	setup_scene(t_scene *scene)
 	scene->mouse = vec2(.5, .5);
 	scene->offset = vec2(.5, .5);
 	settings.renderer = RENDERER_GPU_DOUBLE;
-	settings.type = TYPE_TRICORN;
+	settings.type = TYPE_BURNING_SHIP;
 	settings.subtype = SUBTYPE_MANDELBROT;
 	scene->settings = settings;
+}
+
+int	iterate(t_scene *scene, t_vec2 z, t_vec2 c)
+{
+	int	i;
+
+	i = 0;
+	while (i < scene->iterations)
+	{
+		if (scene->settings.type == TYPE_MANDELBROT)
+			z = mandelbrot(z, c);
+		else if (scene->settings.type == TYPE_TRICORN)
+			z = tricorn(z, c);
+		else if (scene->settings.type == TYPE_BURNING_SHIP)
+			z = burning_ship(z, c);
+		if (complex_modulus_squared(z) > 4)
+			return (i);
+	}
+	return (0);
+}
+
+void	run(t_scene *scene)
+{
+	int		x;
+	int		y;
+	t_vec2	z;
+	t_vec2	c;
+
+	x = 0;
+	y = 0;
+	while (x < scene->width)
+	{
+		while (y < scene->height)
+		{
+
+		}
+	}
 }
 
 int32_t	main(void)
