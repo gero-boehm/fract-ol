@@ -59,4 +59,4 @@ lib/glfw/
 .DS_Store
 
 # Special shader files
-mlx_*_shader.c
+# mlx_*_shader.c
