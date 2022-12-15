@@ -6,13 +6,13 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/07 14:42:09 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/13 16:53:56 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/14 14:57:57 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fract_ol.h"
 
-t_vec2	complex_multiply(t_vec2 z1, t_vec2 z2)
+t_vec2	complex_mult(t_vec2 z1, t_vec2 z2)
 {
 	return (vec2(
 			z1.x * z2.x - z1.y * z2.y,

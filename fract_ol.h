@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 14:40:49 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/13 16:55:01 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/15 11:20:38 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,21 @@
 
 # define DEFAULT_ZOOM 5
 # define DEFAULT_ITERATIONS 100
-# define DEFAULT_WIDTH 512
-# define DEFAULT_HEIGHT 512
+# define DEFAULT_WIDTH 256
+# define DEFAULT_HEIGHT 256
 
 typedef enum e_renderer {
 	RENDERER_CPU,
 	RENDERER_GPU_DOUBLE,
 	RENDERER_GPU_FLOAT,
 }	t_renderer;
+
+typedef enum e_color_component {
+	R,
+	G,
+	B,
+	A,
+}	t_color_component;
 
 typedef enum e_type {
 	TYPE_MANDELBROT,
@@ -75,7 +82,7 @@ t_vec2	mandelbrot(t_vec2 z, t_vec2 c);
 t_vec2	tricorn(t_vec2 z, t_vec2 c);
 t_vec2	burning_ship(t_vec2 z, t_vec2 c);
 
-t_vec2	complex_multiply(t_vec2 z1, t_vec2 z2);
+t_vec2	complex_mult(t_vec2 z1, t_vec2 z2);
 t_vec2	complex_add(t_vec2 z1, t_vec2 z2);
 double	complex_modulus_squared(t_vec2 z);
 
