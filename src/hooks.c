@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 12:48:13 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/15 19:19:59 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/16 02:30:11 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ void	on_loop(void *param)
 		if (scene->settings.renderer == RENDERER_CPU)
 			run(scene);
 		set_offset_uniform(mlx, &scene->offset);
+		render_info(scene);
 	}
 	scene->mouse.x = mx;
 	scene->mouse.y = my;
@@ -86,6 +87,7 @@ void	on_resize(int32_t width, int32_t height, void *param)
 	scene->height = height;
 	scene->aspect = (double) width / (double) height;
 	mlx_resize_image(scene->img, width, height);
+	// printf("%d\n", scene->settings.renderer);
 	if (scene->settings.renderer == RENDERER_CPU)
 		run(scene);
 	set_aspect_uniform(mlx, scene->aspect);
@@ -110,13 +112,14 @@ void	on_scroll(double xdelta, double ydelta, void *param)
 		run(scene);
 	set_offset_uniform(mlx, &scene->offset);
 	set_zoom_uniform(mlx, scene->zoom);
+	render_info(scene);
 }
 
 void	on_keydown(mlx_key_data_t key, void *param)
 {
-	const int		count = 13;
-	const keys_t	keys[] = {MLX_KEY_Q, MLX_KEY_W, MLX_KEY_E, MLX_KEY_R, MLX_KEY_T, MLX_KEY_Y, MLX_KEY_U, MLX_KEY_I, MLX_KEY_O, MLX_KEY_P, MLX_KEY_A, MLX_KEY_S, MLX_KEY_D};
-	const t_op		ops[] = {OP_NONE, OP_NEG, OP_ABS, OP_SIN, OP_COS, OP_TAN, OP_ASIN, OP_ACOS, OP_ATAN, OP_CSC, OP_SEC, OP_COT, OP_EXP};
+	const int		count = 14;
+	const keys_t	keys[] = {MLX_KEY_Q, MLX_KEY_W, MLX_KEY_E, MLX_KEY_R, MLX_KEY_T, MLX_KEY_Y, MLX_KEY_U, MLX_KEY_I, MLX_KEY_O, MLX_KEY_P, MLX_KEY_A, MLX_KEY_S, MLX_KEY_D, MLX_KEY_F};
+	const t_op		ops[] = {OP_NONE, OP_NEG, OP_ABS, OP_SIN, OP_COS, OP_TAN, OP_ASIN, OP_ACOS, OP_ATAN, OP_CSC, OP_SEC, OP_COT, OP_EXP, OP_ZERO};
 	t_scene			*scene;
 	mlx_t			*mlx;
 	int				i;
@@ -131,17 +134,31 @@ void	on_keydown(mlx_key_data_t key, void *param)
 	{
 		if (key.key == keys[i])
 		{
-			if (key.modifier == MLX_SHIFT)
+			if (key.modifier == MLX_ALT)
 			{
-				scene->settings.im_op = ops[i];
-				mlx_set_uniform_1i(mlx, "im_op", scene->settings.im_op);
-				printf("%d\n", ops[i]);
+				if (key.modifier == MLX_SHIFT)
+				{
+					scene->settings.j_im_op = ops[i];
+					mlx_set_uniform_1i(mlx, "j_im_op", scene->settings.j_im_op);
+				}
+				else
+				{
+					scene->settings.j_re_op = ops[i];
+					mlx_set_uniform_1i(mlx, "j_re_op", scene->settings.j_re_op);
+				}
 			}
 			else
 			{
-				scene->settings.re_op = ops[i];
-				mlx_set_uniform_1i(mlx, "re_op", scene->settings.re_op);
-				printf("%d\n", ops[i]);
+				if (key.modifier == MLX_SHIFT)
+				{
+					scene->settings.im_op = ops[i];
+					mlx_set_uniform_1i(mlx, "im_op", scene->settings.im_op);
+				}
+				else
+				{
+					scene->settings.re_op = ops[i];
+					mlx_set_uniform_1i(mlx, "re_op", scene->settings.re_op);
+				}
 			}
 			break ;
 		}
@@ -157,8 +174,22 @@ void	on_keydown(mlx_key_data_t key, void *param)
 		scene->settings.renderer = RENDERER_GPU_DOUBLE;
 	if (key.key == MLX_KEY_M)
 		scene->settings.renderer = RENDERER_GPU_FLOAT;
+	if (key.key == MLX_KEY_KP_0)
+	{
+		scene->offset = vec2(.5, .5);
+		scene->zoom = DEFAULT_ZOOM;
+		scene->iterations = DEFAULT_ITERATIONS;
+		set_offset_uniform(mlx, &scene->offset);
+		set_zoom_uniform(mlx, scene->zoom);
+		mlx_set_uniform_1i(mlx, "iterations", scene->iterations);
+	}
+	// if (key.key == MLX_KEY_KP_5)
+	// {
+
+	// }
 	if (scene->settings.renderer == RENDERER_CPU)
 		run(scene);
 	mlx_set_uniform_1i(mlx, "type", scene->settings.type);
 	mlx_set_uniform_1i(mlx, "renderer", scene->settings.renderer);
+	render_info(scene);
 }

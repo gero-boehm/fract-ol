@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 12:37:25 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/15 19:09:37 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/16 01:07:22 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	setup_scene(t_scene *scene)
 		exit(EXIT_FAILURE);
 	}
 	mlx_image_to_window(scene->mlx, scene->img, 0, 0);
+	scene->info = NULL;
 	// scene->info = mlx_put_string(scene->mlx, "testing12: aa\n aa: tt", 0, 0);
 	// if (scene->info == NULL)
 	// {
@@ -46,6 +47,8 @@ void	setup_scene(t_scene *scene)
 	settings.renderer = RENDERER_CPU;
 	settings.re_op = OP_NONE;
 	settings.im_op = OP_NONE;
+	settings.j_re_op = OP_NONE;
+	settings.j_im_op = OP_NONE;
 	settings.type = TYPE_MANDELBROT;
 	scene->settings = settings;
 }

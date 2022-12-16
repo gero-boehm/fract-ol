@@ -67,6 +67,7 @@ void	run(t_scene *scene)
 	t_vec2		c;
 	int			result;
 
+	// printf("yay\n");
 	x = 0;
 	while (x < scene->width)
 	{
@@ -104,6 +105,7 @@ int32_t	main(int argc, char **argv)
 	mlx = scene.mlx;
 	if (scene.settings.renderer == RENDERER_CPU)
 		run(&scene);
+	toggle_info(&scene);
 	set_aspect_uniform(mlx, scene.aspect);
 	set_zoom_uniform(mlx, scene.zoom);
 	set_offset_uniform(mlx, &scene.offset);
