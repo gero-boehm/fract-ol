@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 19:21:31 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/16 02:29:46 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/16 02:46:45 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,51 @@ void	print_char(char c)
 char	*get_renderer(t_scene *scene)
 {
 	if (scene->settings.renderer == RENDERER_CPU)
-		return ("cpu\n");
+		return ("cpu");
 	if (scene->settings.renderer == RENDERER_GPU_DOUBLE)
-		return ("gpu_double\n");
+		return ("gpu_double");
 	if (scene->settings.renderer == RENDERER_GPU_FLOAT)
-		return ("gpu_float\n");
+		return ("gpu_float");
+	return ("(null)");
+}
+
+char	*get_op(t_op op)
+{
+	if(op == OP_NONE)
+		return ("none");
+	if(op == OP_NEG)
+		return ("neg");
+	if(op == OP_ABS)
+		return ("abs");
+	if(op == OP_SIN)
+		return ("sin");
+	if(op == OP_COS)
+		return ("cos");
+	if(op == OP_TAN)
+		return ("tan");
+	if(op == OP_ASIN)
+		return ("asin");
+	if(op == OP_ACOS)
+		return ("acos");
+	if(op == OP_ATAN)
+		return ("atan");
+	if(op == OP_CSC)
+		return ("csc");
+	if(op == OP_SEC)
+		return ("sec");
+	if(op == OP_COT)
+		return ("cot");
+	if(op == OP_EXP)
+		return ("exp");
+	return ("zero");
+}
+
+char	*get_type(t_scene *scene)
+{
+	if (scene->settings.type == TYPE_MANDELBROT)
+		return ("mandelbrot");
+	if (scene->settings.type == TYPE_JULIA)
+		return ("julia");
 	return ("(null)");
 }
 
@@ -164,8 +204,13 @@ void render_info(t_scene *scene)
 	char *str = calloc(1, 1);
 	strcat2("renderer: ", &str);
 	strcat2(get_renderer(scene), &str);
-	strcat2("fractal:  #abs_abs\ntype:     mandelbrot\n", &str);
-	strcat2("zoom:     ", &str);
+	strcat2("\nfractal:  #", &str);
+	strcat2(get_op(scene->settings.re_op), &str);
+	strcat2("_", &str);
+	strcat2(get_op(scene->settings.im_op), &str);
+	strcat2("\ntype:     ", &str);
+	strcat2(get_type(scene), &str);
+	strcat2("\nzoom:     ", &str);
 	strcat2(dtoa(scene->zoom), &str);
 	strcat2("\noffset.x: ", &str);
 	strcat2(dtoa(scene->offset.x), &str);

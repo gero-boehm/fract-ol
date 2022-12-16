@@ -8,6 +8,8 @@
 
 double apply_op(double v, t_op op)
 {
+	if(op == OP_NONE)
+		return (v);
 	if(op == OP_NEG)
 		return (-v);
 	if(op == OP_ABS)
@@ -32,7 +34,7 @@ double apply_op(double v, t_op op)
 		return (1. / tan(v));
 	if(op == OP_EXP)
 		return (exp(v));
-	return (v);
+	return (0);
 }
 
 t_vec2 fractal(t_scene *scene, t_vec2 z, t_vec2 c)
