@@ -6,13 +6,14 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 14:40:49 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/16 02:26:45 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/17 17:27:46 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FRACT_OL_H
 # define FRACT_OL_H
 
+# include <stdlib.h>
 # include "MLX42/MLX42.h"
 
 # define DEFAULT_ZOOM 5
@@ -42,6 +43,7 @@ typedef enum e_color_component {
 }	t_color_component;
 
 typedef enum e_op {
+	OP_ZERO,
 	OP_NONE,
 	OP_NEG,
 	OP_ABS,
@@ -55,7 +57,6 @@ typedef enum e_op {
 	OP_SEC,
 	OP_COT,
 	OP_EXP,
-	OP_ZERO,
 }	t_op;
 
 typedef enum e_type {
@@ -68,28 +69,27 @@ typedef struct s_vec2 {
 	double	y;
 }	t_vec2;
 
-typedef struct s_settings {
-	t_renderer	renderer;
-	t_op		re_op;
-	t_op		im_op;
-	t_op		j_re_op;
-	t_op		j_im_op;
-	t_type		type;
-}	t_settings;
+typedef struct s_ops {
+	t_op	re;
+	t_op	im;
+}	t_ops;
 
 typedef struct s_scene {
 	mlx_t		*mlx;
 	uint32_t	width;
 	uint32_t	height;
 	mlx_image_t	*img;
-	mlx_image_t	*info;
+	mlx_image_t	*info_img;
 	double		aspect;
 	double		zoom;
 	t_vec2		mouse;
 	t_vec2		offset;
 	int			iterations;
 	float		time;
-	t_settings	settings;
+	t_renderer	renderer;
+	t_ops		fractal;
+	t_ops		julia;
+	t_type		type;
 }	t_scene;
 
 void		setup_scene(t_scene *scene);
@@ -100,10 +100,6 @@ t_vec2		vec2_add(t_vec2 v1, t_vec2 v2);
 t_vec2		vec2_sub(t_vec2 v1, t_vec2 v2);
 t_vec2		vec2_div_scalar(t_vec2 v, double s);
 t_vec2		vec2_mult_scalar(t_vec2 v, double s);
-
-void		set_offset_uniform(mlx_t *mlx, t_vec2 *offset);
-void		set_aspect_uniform(mlx_t *mlx, double aspect);
-void		set_zoom_uniform(mlx_t *mlx, double zoom);
 
 t_vec2		mandelbrot(t_vec2 z, t_vec2 c);
 t_vec2		tricorn(t_vec2 z, t_vec2 c);
@@ -122,8 +118,14 @@ uint32_t	lerp_color(uint32_t min, uint32_t max, double t);
 void		set_color_at(uint8_t *pixel, uint32_t color);
 
 void		run(t_scene *scene);
-void		toggle_info(t_scene *scene);
 void		render_info(t_scene *scene);
 
+int			malloc2(size_t size, char **str);
+int			dtoa2(double value, char **str);
+t_ops		ops(t_op re, t_op im);
+t_vec2		apply_op_double(double v, t_ops ops);
+t_vec2		apply_op_vec2(t_vec2 v, t_ops ops);
+
+void		update_uniforms(t_scene *scene);
 
 #endif

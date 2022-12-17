@@ -6,74 +6,96 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 12:48:13 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/16 02:30:11 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/17 17:31:57 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
 #include "fract_ol.h"
+
+void	update_iterations(t_scene *scene, int *rerender)
+{
+	mlx_t	*mlx;
+
+	mlx = scene->mlx;
+	if (mlx_is_key_down(mlx, MLX_KEY_UP))
+	{
+		scene->iterations++;
+		*rerender = 1;
+	}
+	if (mlx_is_key_down(mlx, MLX_KEY_DOWN))
+	{
+		scene->iterations--;
+		*rerender = 1;
+	}
+}
+
+void	update_time(t_scene *scene, int *rerender)
+{
+	mlx_t	*mlx;
+	float	step;
+
+	mlx = scene->mlx;
+	step = .1;
+	if (mlx_is_key_down(mlx, MLX_KEY_LEFT_SHIFT))
+		step = .5;
+	if (mlx_is_key_down(mlx, MLX_KEY_LEFT_ALT))
+		step = .01;
+	if (mlx_is_key_down(mlx, MLX_KEY_LEFT))
+	{
+		mlx_set_uniform_1f(mlx, "time", scene->time -= step);
+		*rerender = 1;
+	}
+	if (mlx_is_key_down(mlx, MLX_KEY_RIGHT))
+	{
+		mlx_set_uniform_1f(mlx, "time", scene->time += step);
+		*rerender = 1;
+	}
+}
+
+void	update_mouse(t_scene *scene, int *rerender)
+{
+	mlx_t	*mlx;
+	int32_t	x;
+	int32_t	y;
+	double	mx;
+	double	my;
+
+	mlx = scene->mlx;
+	mlx_get_mouse_pos(mlx, &x, &y);
+	mx = (double) x / (double) scene->width;
+	my = (double) y / (double) scene->height;
+	if (mlx_is_mouse_down(mlx, MLX_MOUSE_BUTTON_LEFT)
+		&& (mx != scene->mouse.x || my != scene->mouse.y))
+	{
+		scene->offset = vec2_add(vec2_sub(vec2(mx, my), scene->mouse),
+				scene->offset);
+		*rerender = 1;
+	}
+	scene->mouse.x = mx;
+	scene->mouse.y = my;
+}
 
 
 void	on_loop(void *param)
 {
 	t_scene	*scene;
 	mlx_t	*mlx;
-	float	time_step;
-	int		updated_iterations;
+	int		rerender;
 
 	scene = param;
 	mlx = scene->mlx;
-	updated_iterations = 0;
+	rerender = 0;
 	if (mlx_is_key_down(mlx, MLX_KEY_ESCAPE))
 		mlx_close_window(mlx);
-	if (mlx_is_key_down(mlx, MLX_KEY_UP))
-	{
-		scene->iterations++;
-		updated_iterations = 1;
-	}
-	if (mlx_is_key_down(mlx, MLX_KEY_DOWN))
-	{
-		scene->iterations--;
-		updated_iterations = 1;
-	}
-	if (updated_iterations)
-	{
-		if (scene->settings.renderer == RENDERER_CPU)
-			run(scene);
-		set_aspect_uniform(mlx, scene->aspect);
-		mlx_set_uniform_1i(mlx, "iterations", scene->iterations);
-	}
-
-	time_step = .1;
-	if (mlx_is_key_down(mlx, MLX_KEY_LEFT_SHIFT))
-		time_step = .5;
-	if (mlx_is_key_down(mlx, MLX_KEY_LEFT_ALT))
-		time_step = .01;
-	if (mlx_is_key_down(mlx, MLX_KEY_LEFT))
-		mlx_set_uniform_1f(mlx, "time", scene->time -= time_step);
-	if (mlx_is_key_down(mlx, MLX_KEY_RIGHT))
-		mlx_set_uniform_1f(mlx, "time", scene->time += time_step);
-
-	int32_t x;
-	int32_t y;
-	mlx_get_mouse_pos(mlx, &x, &y);
-
-	double mx = (double) x / (double) scene->width;
-	double my = (double) y / (double) scene->height;
-
-	if (mlx_is_mouse_down(mlx, MLX_MOUSE_BUTTON_LEFT) && (mx != scene->mouse.x || my != scene->mouse.y))
-	{
-		t_vec2 difference = vec2_sub(vec2(mx, my), scene->mouse);
-		scene->offset = vec2_add(difference, scene->offset);
-		if (scene->settings.renderer == RENDERER_CPU)
-			run(scene);
-		set_offset_uniform(mlx, &scene->offset);
-		render_info(scene);
-	}
-	scene->mouse.x = mx;
-	scene->mouse.y = my;
-
-	// printf("%d\n", scene->settings.renderer);
+	update_iterations(scene, &rerender);
+	update_time(scene, &rerender);
+	update_mouse(scene, &rerender);
+	if (!rerender)
+		return ;
+	if (scene->renderer == RENDERER_CPU)
+		run(scene);
+	update_uniforms(scene);
+	render_info(scene);
 }
 
 void	on_resize(int32_t width, int32_t height, void *param)
@@ -87,10 +109,10 @@ void	on_resize(int32_t width, int32_t height, void *param)
 	scene->height = height;
 	scene->aspect = (double) width / (double) height;
 	mlx_resize_image(scene->img, width, height);
-	// printf("%d\n", scene->settings.renderer);
-	if (scene->settings.renderer == RENDERER_CPU)
+	if (scene->renderer == RENDERER_CPU)
 		run(scene);
-	set_aspect_uniform(mlx, scene->aspect);
+	update_uniforms(scene);
+	render_info(scene);
 }
 
 void	on_scroll(double xdelta, double ydelta, void *param)
@@ -108,10 +130,9 @@ void	on_scroll(double xdelta, double ydelta, void *param)
 	difference = vec2_sub(scene->mouse, scene->offset);
 	scene->offset = vec2_add(vec2_mult_scalar(
 				vec2_div_scalar(difference, scene->zoom), step), scene->offset);
-	if (scene->settings.renderer == RENDERER_CPU)
+	if (scene->renderer == RENDERER_CPU)
 		run(scene);
-	set_offset_uniform(mlx, &scene->offset);
-	set_zoom_uniform(mlx, scene->zoom);
+	update_uniforms(scene);
 	render_info(scene);
 }
 
@@ -134,62 +155,46 @@ void	on_keydown(mlx_key_data_t key, void *param)
 	{
 		if (key.key == keys[i])
 		{
-			if (key.modifier == MLX_ALT)
+			if (key.modifier & MLX_ALT)
 			{
-				if (key.modifier == MLX_SHIFT)
-				{
-					scene->settings.j_im_op = ops[i];
-					mlx_set_uniform_1i(mlx, "j_im_op", scene->settings.j_im_op);
-				}
+				if (key.modifier & MLX_SHIFT)
+					scene->julia.im = ops[i];
 				else
-				{
-					scene->settings.j_re_op = ops[i];
-					mlx_set_uniform_1i(mlx, "j_re_op", scene->settings.j_re_op);
-				}
+					scene->julia.re = ops[i];
 			}
 			else
 			{
-				if (key.modifier == MLX_SHIFT)
-				{
-					scene->settings.im_op = ops[i];
-					mlx_set_uniform_1i(mlx, "im_op", scene->settings.im_op);
-				}
+				if (key.modifier & MLX_SHIFT)
+					scene->fractal.im = ops[i];
 				else
-				{
-					scene->settings.re_op = ops[i];
-					mlx_set_uniform_1i(mlx, "re_op", scene->settings.re_op);
-				}
+					scene->fractal.re = ops[i];
 			}
 			break ;
 		}
 		i++;
 	}
 	if (key.key == MLX_KEY_Z)
-		scene->settings.type = TYPE_MANDELBROT;
+		scene->type = TYPE_MANDELBROT;
 	if (key.key == MLX_KEY_X)
-		scene->settings.type = TYPE_JULIA;
+		scene->type = TYPE_JULIA;
 	if (key.key == MLX_KEY_B)
-		scene->settings.renderer = RENDERER_CPU;
+		scene->renderer = RENDERER_CPU;
 	if (key.key == MLX_KEY_N)
-		scene->settings.renderer = RENDERER_GPU_DOUBLE;
+		scene->renderer = RENDERER_GPU_DOUBLE;
 	if (key.key == MLX_KEY_M)
-		scene->settings.renderer = RENDERER_GPU_FLOAT;
+		scene->renderer = RENDERER_GPU_FLOAT;
 	if (key.key == MLX_KEY_KP_0)
 	{
 		scene->offset = vec2(.5, .5);
 		scene->zoom = DEFAULT_ZOOM;
 		scene->iterations = DEFAULT_ITERATIONS;
-		set_offset_uniform(mlx, &scene->offset);
-		set_zoom_uniform(mlx, scene->zoom);
-		mlx_set_uniform_1i(mlx, "iterations", scene->iterations);
 	}
 	// if (key.key == MLX_KEY_KP_5)
 	// {
-
+	// 	printf("%lf\n", scene->offset.x);
 	// }
-	if (scene->settings.renderer == RENDERER_CPU)
+	if (scene->renderer == RENDERER_CPU)
 		run(scene);
-	mlx_set_uniform_1i(mlx, "type", scene->settings.type);
-	mlx_set_uniform_1i(mlx, "renderer", scene->settings.renderer);
+	update_uniforms(scene);
 	render_info(scene);
 }

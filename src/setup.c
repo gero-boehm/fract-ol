@@ -6,17 +6,14 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 12:37:25 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/16 01:07:22 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/17 17:36:50 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
 #include "fract_ol.h"
 
 void	setup_scene(t_scene *scene)
 {
-	t_settings	settings;
-
 	scene->mlx = mlx_init(DEFAULT_WIDTH, DEFAULT_HEIGHT, "MLX42", true);
 	if (scene->mlx == NULL)
 		exit(EXIT_FAILURE);
@@ -27,7 +24,8 @@ void	setup_scene(t_scene *scene)
 		exit(EXIT_FAILURE);
 	}
 	mlx_image_to_window(scene->mlx, scene->img, 0, 0);
-	scene->info = NULL;
+	// scene->info_visible = 0;
+	scene->info_img = NULL;
 	// scene->info = mlx_put_string(scene->mlx, "testing12: aa\n aa: tt", 0, 0);
 	// if (scene->info == NULL)
 	// {
@@ -44,13 +42,10 @@ void	setup_scene(t_scene *scene)
 	scene->time = 0;
 	scene->mouse = vec2(.5, .5);
 	scene->offset = vec2(.5, .5);
-	settings.renderer = RENDERER_CPU;
-	settings.re_op = OP_NONE;
-	settings.im_op = OP_NONE;
-	settings.j_re_op = OP_NONE;
-	settings.j_im_op = OP_NONE;
-	settings.type = TYPE_MANDELBROT;
-	scene->settings = settings;
+	scene->renderer = RENDERER_GPU_FLOAT;
+	scene->type = TYPE_MANDELBROT;
+	scene->fractal = ops(OP_NONE, OP_NONE);
+	scene->julia = ops(OP_NONE, OP_NONE);
 }
 
 void	setup_hooks(t_scene *scene)

@@ -6,11 +6,10 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 19:21:31 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/16 02:46:45 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/17 17:49:14 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "fract_ol.h"
@@ -63,7 +62,7 @@ void	print_char(char c)
 		int ix = 0;
 		while (ix < CHAR_WIDTH)
 		{
-			// scene->info->pixels[(dy + iy) * width + dx + ix] = FONT[iy / FONT_SIZE * CHAR_WIDTH * 95 + ix / FONT_SIZE];
+			// scene->info_img->pixels[(dy + iy) * width + dx + ix] = FONT[iy / FONT_SIZE * CHAR_WIDTH * 95 + ix / FONT_SIZE];
 			printf("%c", FONT[i * CHAR_WIDTH * CHAR_HEIGHT + iy * CHAR_WIDTH + ix] == '1' ? '0' : '.');
 			ix++;
 		}
@@ -74,51 +73,51 @@ void	print_char(char c)
 
 char	*get_renderer(t_scene *scene)
 {
-	if (scene->settings.renderer == RENDERER_CPU)
+	if (scene->renderer == RENDERER_CPU)
 		return ("cpu");
-	if (scene->settings.renderer == RENDERER_GPU_DOUBLE)
+	if (scene->renderer == RENDERER_GPU_DOUBLE)
 		return ("gpu_double");
-	if (scene->settings.renderer == RENDERER_GPU_FLOAT)
+	if (scene->renderer == RENDERER_GPU_FLOAT)
 		return ("gpu_float");
 	return ("(null)");
 }
 
 char	*get_op(t_op op)
 {
-	if(op == OP_NONE)
+	if (op == OP_NONE)
 		return ("none");
-	if(op == OP_NEG)
+	if (op == OP_NEG)
 		return ("neg");
-	if(op == OP_ABS)
+	if (op == OP_ABS)
 		return ("abs");
-	if(op == OP_SIN)
+	if (op == OP_SIN)
 		return ("sin");
-	if(op == OP_COS)
+	if (op == OP_COS)
 		return ("cos");
-	if(op == OP_TAN)
+	if (op == OP_TAN)
 		return ("tan");
-	if(op == OP_ASIN)
+	if (op == OP_ASIN)
 		return ("asin");
-	if(op == OP_ACOS)
+	if (op == OP_ACOS)
 		return ("acos");
-	if(op == OP_ATAN)
+	if (op == OP_ATAN)
 		return ("atan");
-	if(op == OP_CSC)
+	if (op == OP_CSC)
 		return ("csc");
-	if(op == OP_SEC)
+	if (op == OP_SEC)
 		return ("sec");
-	if(op == OP_COT)
+	if (op == OP_COT)
 		return ("cot");
-	if(op == OP_EXP)
+	if (op == OP_EXP)
 		return ("exp");
 	return ("zero");
 }
 
 char	*get_type(t_scene *scene)
 {
-	if (scene->settings.type == TYPE_MANDELBROT)
+	if (scene->type == TYPE_MANDELBROT)
 		return ("mandelbrot");
-	if (scene->settings.type == TYPE_JULIA)
+	if (scene->type == TYPE_JULIA)
 		return ("julia");
 	return ("(null)");
 }
@@ -139,95 +138,86 @@ int	strcat2(char *src, char **dst)
 	return (new == NULL);
 }
 
-static int	get_offset(double value)
+int	append_str(char *key, char *value, char **str)
 {
-	int		offset;
-
-	offset = 0;
-	while (value >= 1.)
-	{
-		offset++;
-		value /= 10;
-	}
-	if (offset == 0)
-		offset = 1;
-	return (offset);
+	if (strcat2(key, str))
+		return (1);
+	if (strcat2(value, str))
+		return (2);
+	return (0);
 }
 
-static void	fill_left(double value, char *buffer, int offset)
+int	append_double(char *key, double value, char **str)
 {
-	int	ival;
+	char	*aval;
 
-	ival = (int) value;
-	while (offset--)
-	{
-		buffer[offset] = (char)(ival % 10) + '0';
-		ival /= 10;
-	}
+	if (strcat2(key, str))
+		return (1);
+	if (dtoa2(value, &aval))
+		return (2);
+	if (strcat2(aval, str))
+		return (free(aval), 3);
+	free(aval);
+	return (0);
 }
 
-static void	fill_right(double value, char *buffer, int offset)
+int	append_ops(char *key, t_ops ops, char **str)
 {
-	int	ival;
-	int	i;
-
-	i = 0;
-	ival = (int) value;
-	while (i < 6)
-	{
-		value -= (double) ival;
-		value *= 10;
-		ival = (int) value;
-		buffer[++offset] = (char)(ival) + '0';
-		i++;
-	}
+	if (strcat2(key, str))
+		return (1);
+	if (strcat2(get_op(ops.re), str))
+		return (2);
+	if (strcat2("_", str))
+		return (3);
+	if (strcat2(get_op(ops.im), str))
+		return (4);
+	return (0);
 }
 
-char	*dtoa(double value)
+int	get_info_str2(t_scene *scene, char **str)
 {
-	char	*buffer;
-	int		offset;
-
-	offset = get_offset(value);
-	buffer = malloc(offset + 8);
-	if (buffer == NULL)
-		return (NULL);
-	buffer[offset + 7] = 0;
-	fill_left(value, buffer, offset);
-	buffer[offset] = '.';
-	fill_right(value, buffer, offset);
-	return (buffer);
+	if (malloc2(1, str))
+		return (1);
+	**str = 0;
+	if (append_str("renderer:   ", get_renderer(scene), str))
+		return (2);
+	if (append_ops("\nfractal:    #", scene->fractal, str))
+		return (3);
+	if (append_str("\ntype:       ", get_type(scene), str))
+		return (4);
+	if (scene->type == TYPE_JULIA
+		&& append_ops("\njulia:      #", scene->julia, str))
+		return (5);
+	if (append_double("\niterations: ", scene->iterations, str))
+		return (6);
+	if (append_double("\nzoom:       ", scene->zoom, str))
+		return (7);
+	if (append_double("\noffset.x:   ", scene->offset.x, str))
+		return (8);
+	if (append_double("\noffset.y:   ", scene->offset.y, str))
+		return (9);
+	if (append_double("\ntime:       ", scene->time, str))
+		return (10);
+	return (0);
 }
 
-void render_info(t_scene *scene)
+void	render_info(t_scene *scene)
 {
-	char *str = calloc(1, 1);
-	strcat2("renderer: ", &str);
-	strcat2(get_renderer(scene), &str);
-	strcat2("\nfractal:  #", &str);
-	strcat2(get_op(scene->settings.re_op), &str);
-	strcat2("_", &str);
-	strcat2(get_op(scene->settings.im_op), &str);
-	strcat2("\ntype:     ", &str);
-	strcat2(get_type(scene), &str);
-	strcat2("\nzoom:     ", &str);
-	strcat2(dtoa(scene->zoom), &str);
-	strcat2("\noffset.x: ", &str);
-	strcat2(dtoa(scene->offset.x), &str);
-	strcat2("\noffset.y: ", &str);
-	strcat2(dtoa(scene->offset.y), &str);
+	char	*str;
 
+	if (get_info_str2(scene, &str))
+		return ;
 	int cx = get_columns(str);
 	int cy = get_rows(str);
 	int width = (cx * CHAR_WIDTH + (cx - 1) * CHAR_PADDING + PADDING * 2) * FONT_SIZE;
 	int height = (cy * CHAR_HEIGHT + (cy - 1) * LINE_PADDING + PADDING * 2) * FONT_SIZE;
 
-	if (scene->info != NULL)
-		mlx_delete_image(scene->mlx, scene->info);
-	scene->info = mlx_new_image(scene->mlx, width, height);
-	if (scene->info == NULL)
+	if (scene->info_img != NULL)
+		mlx_delete_image(scene->mlx, scene->info_img);
+	scene->info_img = mlx_new_image(scene->mlx, width, height);
+	if (scene->info_img == NULL)
 		exit(EXIT_FAILURE);
-	mlx_image_to_window(scene->mlx, scene->info, 0, 0);
+	mlx_image_to_window(scene->mlx, scene->info_img, 0, 0);
 	int dx = PADDING * FONT_SIZE;
 	int dy = PADDING * FONT_SIZE;
 	while(*str)
@@ -247,29 +237,16 @@ void render_info(t_scene *scene)
 			int ix = 0;
 			while (ix < CHAR_WIDTH * FONT_SIZE)
 			{
-				// scene->info->pixels[(dy + iy) * width + dx + ix] = FONT[iy / FONT_SIZE * CHAR_WIDTH * 95 + ix / FONT_SIZE];
+				// scene->info_img->pixels[(dy + iy) * width + dx + ix] = FONT[iy / FONT_SIZE * CHAR_WIDTH * 95 + ix / FONT_SIZE];
 				uint32_t color = FONT[i * CHAR_WIDTH * CHAR_HEIGHT + iy / FONT_SIZE * CHAR_WIDTH + ix / FONT_SIZE] == '1' ? 0xffffffff : 0x00000000;
-				mlx_put_pixel(scene->info, dx + ix, dy + iy, color);
-				printf("%c", FONT[i * CHAR_WIDTH * CHAR_HEIGHT + iy / FONT_SIZE * CHAR_WIDTH + ix / FONT_SIZE] == '1' ? '0' : '.');
+				mlx_put_pixel(scene->info_img, dx + ix, dy + iy, color);
+				// printf("%c", FONT[i * CHAR_WIDTH * CHAR_HEIGHT + iy / FONT_SIZE * CHAR_WIDTH + ix / FONT_SIZE] == '1' ? '0' : '.');
 				ix++;
 			}
-			printf("\n");
+			// printf("\n");
 			iy++;
 		}
 		dx += (CHAR_WIDTH + CHAR_PADDING) * FONT_SIZE;
 		str++;
 	}
-}
-
-void	toggle_info(t_scene *scene)
-{
-	if (scene->info != NULL)
-	{
-		mlx_delete_image(scene->mlx, scene->info);
-		scene->info = NULL;
-	}
-
-	// print_char('0');
-	// return;
-	render_info(scene);
 }

@@ -1,7 +1,7 @@
 CC=cc
 CFLAGS=-Wall -Wextra -Werror -I MLX42/include -I include
 NAME=libft.a
-SRC=src/color.c src/complex.c src/fractals.c src/hooks.c src/setup.c src/uniforms.c src/vec2.c src/info.c
+SRC=src/color.c src/complex.c src/fractals.c src/hooks.c src/setup.c src/uniforms.c src/vec2.c src/info.c src/malloc2.c src/dtoa2.c src/ops.c
 OBJ=$(SRC:.c=.o)
 LIBS=MLX42/libmlx42.a -lglfw -L "/Users/$$USER/.brew/opt/glfw/lib/" -framework Cocoa -framework OpenGL -framework IOKit
 
