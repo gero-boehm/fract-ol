@@ -6,247 +6,98 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 19:21:31 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/17 17:49:14 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/18 16:18:35 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <string.h>
 #include "fract_ol.h"
 
-int	get_rows(char *str)
+static int	is_filled(int i, int ix, int iy)
 {
-	int	rows;
+	int	offset_i;
+	int	offset_iy;
+	int	offset_ix;
 
-	rows = 1;
-	while (*str)
-	{
-		if (*str == '\n')
-			rows++;
-		str++;
-	}
-	return (rows);
+	offset_i = i * CHAR_WIDTH * CHAR_HEIGHT;
+	offset_iy = iy / FONT_SIZE * CHAR_WIDTH;
+	offset_ix = ix / FONT_SIZE;
+	return (FONT[offset_i + offset_iy + offset_ix] == '1');
 }
 
-int	get_columns(char *str)
+static uint32_t	get_color(int filled)
 {
-	int	columns;
-	int	count;
-
-	columns = 0;
-	count = 0;
-	while (*str)
-	{
-		if (*str == '\n')
-		{
-			if (count > columns)
-				columns = count;
-			count = 0;
-		}
-		else
-			count++;
-		str++;
-	}
-	if (count > columns)
-		columns = count;
-	return (columns);
+	if (filled)
+		return (0xffffffff);
+	return (0x00000000);
 }
 
-void	print_char(char c)
+static void	put_char(mlx_image_t *img, char c, int ox, int oy)
 {
-	int i = (int) c - 32;
+	int			i;
+	int			ix;
+	int			iy;
+	uint32_t	color;
 
-	int iy = 0;
-	while (iy < CHAR_HEIGHT)
+	i = (int) c - 32;
+	iy = 0;
+	while (iy < CHAR_HEIGHT * FONT_SIZE)
 	{
-		int ix = 0;
-		while (ix < CHAR_WIDTH)
+		ix = 0;
+		while (ix < CHAR_WIDTH * FONT_SIZE)
 		{
-			// scene->info_img->pixels[(dy + iy) * width + dx + ix] = FONT[iy / FONT_SIZE * CHAR_WIDTH * 95 + ix / FONT_SIZE];
-			printf("%c", FONT[i * CHAR_WIDTH * CHAR_HEIGHT + iy * CHAR_WIDTH + ix] == '1' ? '0' : '.');
+			color = get_color(is_filled(i, ix, iy));
+			mlx_put_pixel(img, ox + ix, oy + iy, color);
 			ix++;
 		}
-		printf("\n");
 		iy++;
 	}
 }
 
-char	*get_renderer(t_scene *scene)
+static int	prepare_img2(char *str, t_scene *scene)
 {
-	if (scene->renderer == RENDERER_CPU)
-		return ("cpu");
-	if (scene->renderer == RENDERER_GPU_DOUBLE)
-		return ("gpu_double");
-	if (scene->renderer == RENDERER_GPU_FLOAT)
-		return ("gpu_float");
-	return ("(null)");
-}
+	int	cx;
+	int	cy;
+	int	width;
+	int	height;
 
-char	*get_op(t_op op)
-{
-	if (op == OP_NONE)
-		return ("none");
-	if (op == OP_NEG)
-		return ("neg");
-	if (op == OP_ABS)
-		return ("abs");
-	if (op == OP_SIN)
-		return ("sin");
-	if (op == OP_COS)
-		return ("cos");
-	if (op == OP_TAN)
-		return ("tan");
-	if (op == OP_ASIN)
-		return ("asin");
-	if (op == OP_ACOS)
-		return ("acos");
-	if (op == OP_ATAN)
-		return ("atan");
-	if (op == OP_CSC)
-		return ("csc");
-	if (op == OP_SEC)
-		return ("sec");
-	if (op == OP_COT)
-		return ("cot");
-	if (op == OP_EXP)
-		return ("exp");
-	return ("zero");
-}
-
-char	*get_type(t_scene *scene)
-{
-	if (scene->type == TYPE_MANDELBROT)
-		return ("mandelbrot");
-	if (scene->type == TYPE_JULIA)
-		return ("julia");
-	return ("(null)");
-}
-
-int	strcat2(char *src, char **dst)
-{
-	char	*new;
-	size_t	length;
-
-	length = strlen(*dst) + strlen(src);
-	new = calloc(length + 1, 1);
-	if (new == NULL)
+	cx = get_columns(str);
+	cy = get_rows(str);
+	width = (cx * CHAR_WIDTH + (cx - 1) * CHAR_PADDING + PADDING * 2)
+		* FONT_SIZE;
+	height = (cy * CHAR_HEIGHT + (cy - 1) * LINE_PADDING + PADDING * 2)
+		* FONT_SIZE;
+	if (scene->info_img != NULL)
+		mlx_delete_image(scene->mlx, scene->info_img);
+	scene->info_img = mlx_new_image(scene->mlx, width, height);
+	if (scene->info_img == NULL)
 		return (1);
-	strcat(new, *dst);
-	strcat(new, src);
-	free(*dst);
-	*dst = new;
-	return (new == NULL);
-}
-
-int	append_str(char *key, char *value, char **str)
-{
-	if (strcat2(key, str))
-		return (1);
-	if (strcat2(value, str))
-		return (2);
-	return (0);
-}
-
-int	append_double(char *key, double value, char **str)
-{
-	char	*aval;
-
-	if (strcat2(key, str))
-		return (1);
-	if (dtoa2(value, &aval))
-		return (2);
-	if (strcat2(aval, str))
-		return (free(aval), 3);
-	free(aval);
-	return (0);
-}
-
-int	append_ops(char *key, t_ops ops, char **str)
-{
-	if (strcat2(key, str))
-		return (1);
-	if (strcat2(get_op(ops.re), str))
-		return (2);
-	if (strcat2("_", str))
-		return (3);
-	if (strcat2(get_op(ops.im), str))
-		return (4);
-	return (0);
-}
-
-int	get_info_str2(t_scene *scene, char **str)
-{
-	if (malloc2(1, str))
-		return (1);
-	**str = 0;
-	if (append_str("renderer:   ", get_renderer(scene), str))
-		return (2);
-	if (append_ops("\nfractal:    #", scene->fractal, str))
-		return (3);
-	if (append_str("\ntype:       ", get_type(scene), str))
-		return (4);
-	if (scene->type == TYPE_JULIA
-		&& append_ops("\njulia:      #", scene->julia, str))
-		return (5);
-	if (append_double("\niterations: ", scene->iterations, str))
-		return (6);
-	if (append_double("\nzoom:       ", scene->zoom, str))
-		return (7);
-	if (append_double("\noffset.x:   ", scene->offset.x, str))
-		return (8);
-	if (append_double("\noffset.y:   ", scene->offset.y, str))
-		return (9);
-	if (append_double("\ntime:       ", scene->time, str))
-		return (10);
+	mlx_image_to_window(scene->mlx, scene->info_img, 0, 0);
 	return (0);
 }
 
 void	render_info(t_scene *scene)
 {
 	char	*str;
+	int		ox;
+	int		oy;
 
 	if (get_info_str2(scene, &str))
 		return ;
-	int cx = get_columns(str);
-	int cy = get_rows(str);
-	int width = (cx * CHAR_WIDTH + (cx - 1) * CHAR_PADDING + PADDING * 2) * FONT_SIZE;
-	int height = (cy * CHAR_HEIGHT + (cy - 1) * LINE_PADDING + PADDING * 2) * FONT_SIZE;
-
-	if (scene->info_img != NULL)
-		mlx_delete_image(scene->mlx, scene->info_img);
-	scene->info_img = mlx_new_image(scene->mlx, width, height);
-	if (scene->info_img == NULL)
-		exit(EXIT_FAILURE);
-	mlx_image_to_window(scene->mlx, scene->info_img, 0, 0);
-	int dx = PADDING * FONT_SIZE;
-	int dy = PADDING * FONT_SIZE;
-	while(*str)
+	if (prepare_img2(str, scene))
+		return ;
+	ox = PADDING * FONT_SIZE;
+	oy = PADDING * FONT_SIZE;
+	while (*str)
 	{
 		if (*str == '\n')
 		{
-			dy += (CHAR_HEIGHT + LINE_PADDING) * FONT_SIZE;
-			dx = PADDING * FONT_SIZE;
+			oy += (CHAR_HEIGHT + LINE_PADDING) * FONT_SIZE;
+			ox = PADDING * FONT_SIZE;
 			str++;
-			continue;
+			continue ;
 		}
-
-		int i = (int) *str - 32;
-		int iy = 0;
-		while (iy < CHAR_HEIGHT * FONT_SIZE)
-		{
-			int ix = 0;
-			while (ix < CHAR_WIDTH * FONT_SIZE)
-			{
-				// scene->info_img->pixels[(dy + iy) * width + dx + ix] = FONT[iy / FONT_SIZE * CHAR_WIDTH * 95 + ix / FONT_SIZE];
-				uint32_t color = FONT[i * CHAR_WIDTH * CHAR_HEIGHT + iy / FONT_SIZE * CHAR_WIDTH + ix / FONT_SIZE] == '1' ? 0xffffffff : 0x00000000;
-				mlx_put_pixel(scene->info_img, dx + ix, dy + iy, color);
-				// printf("%c", FONT[i * CHAR_WIDTH * CHAR_HEIGHT + iy / FONT_SIZE * CHAR_WIDTH + ix / FONT_SIZE] == '1' ? '0' : '.');
-				ix++;
-			}
-			// printf("\n");
-			iy++;
-		}
-		dx += (CHAR_WIDTH + CHAR_PADDING) * FONT_SIZE;
+		put_char(scene->info_img, *str, ox, oy);
+		ox += (CHAR_WIDTH + CHAR_PADDING) * FONT_SIZE;
 		str++;
 	}
 }

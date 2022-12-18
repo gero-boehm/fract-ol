@@ -6,34 +6,22 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 12:37:25 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/17 17:36:50 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/18 13:56:12 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fract_ol.h"
 
-void	setup_scene(t_scene *scene)
+int	setup_scene2(t_scene *scene)
 {
 	scene->mlx = mlx_init(DEFAULT_WIDTH, DEFAULT_HEIGHT, "MLX42", true);
 	if (scene->mlx == NULL)
-		exit(EXIT_FAILURE);
+		return (1);
 	scene->img = mlx_new_image(scene->mlx, DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	if (scene->img == NULL)
-	{
-		free(scene->mlx);
-		exit(EXIT_FAILURE);
-	}
+		return (free(scene->mlx), 2);
 	mlx_image_to_window(scene->mlx, scene->img, 0, 0);
-	// scene->info_visible = 0;
 	scene->info_img = NULL;
-	// scene->info = mlx_put_string(scene->mlx, "testing12: aa\n aa: tt", 0, 0);
-	// if (scene->info == NULL)
-	// {
-	// 	free(scene->mlx);
-	// 	free(scene->img);
-	// 	exit(EXIT_FAILURE);
-	// }
-	// mlx_image_to_window(scene->mlx, scene->info, 0, 0);
 	scene->width = DEFAULT_WIDTH;
 	scene->height = DEFAULT_HEIGHT;
 	scene->aspect = (double) scene->width / (double) scene->height;
@@ -46,6 +34,7 @@ void	setup_scene(t_scene *scene)
 	scene->type = TYPE_MANDELBROT;
 	scene->fractal = ops(OP_NONE, OP_NONE);
 	scene->julia = ops(OP_NONE, OP_NONE);
+	return (0);
 }
 
 void	setup_hooks(t_scene *scene)

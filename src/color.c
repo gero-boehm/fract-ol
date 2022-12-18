@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 12:42:19 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/15 13:09:30 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/18 14:21:43 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static uint8_t	lerp(uint8_t min, uint8_t max, double t)
 	return ((max - min) * t + min);
 }
 
-uint32_t	lerp_color(uint32_t min, uint32_t max, double t)
+static uint32_t	lerp_color(uint32_t min, uint32_t max, double t)
 {
 	uint32_t	result;
 
@@ -42,10 +42,20 @@ uint32_t	lerp_color(uint32_t min, uint32_t max, double t)
 	return (result);
 }
 
-void	set_color_at(uint8_t *pixel, uint32_t color)
+static void	set_color_at(uint8_t *pixel, uint32_t color)
 {
 	*pixel++ = get_component(color, R);
 	*pixel++ = get_component(color, G);
 	*pixel++ = get_component(color, B);
 	*pixel++ = get_component(color, A);
+}
+
+void	color_pixel(t_scene *scene, int x, int y, int result)
+{
+	double		t;
+	uint32_t	color;
+
+	t = (double) result / (double) scene->iterations;
+	color = lerp_color(0x000000ff, 0xff0000ff, t);
+	set_color_at(scene->img->pixels + (y * scene->width + x) * 4, color);
 }
