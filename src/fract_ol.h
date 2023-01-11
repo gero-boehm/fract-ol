@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 14:40:49 by gbohm             #+#    #+#             */
-/*   Updated: 2023/01/11 18:26:10 by gbohm            ###   ########.fr       */
+/*   Updated: 2023/01/11 21:51:48 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,5 +143,13 @@ int			get_columns(char *str);
 char		*get_renderer(t_scene *scene);
 char		*get_op(t_op op);
 char		*get_type(t_scene *scene);
+
+
+int	streq(const char *s1, const char *s2);
+size_t	arrlen(char **arr);
+int	eval_ops(const char *str, t_ops *ops);
+int	parse(int argc, const char **argv, t_scene *scene);
+int	split2(const char *str, char c, char ***result);
+
 
 #endif
