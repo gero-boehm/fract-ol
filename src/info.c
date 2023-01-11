@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 19:21:31 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/18 16:18:35 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/19 05:11:44 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ static int	prepare_img2(char *str, t_scene *scene)
 void	render_info(t_scene *scene)
 {
 	char	*str;
+	char	*cursor;
 	int		ox;
 	int		oy;
 
@@ -87,17 +88,17 @@ void	render_info(t_scene *scene)
 		return ;
 	ox = PADDING * FONT_SIZE;
 	oy = PADDING * FONT_SIZE;
-	while (*str)
+	cursor = str - 1;
+	while (*(++cursor))
 	{
-		if (*str == '\n')
+		if (*cursor == '\n')
 		{
 			oy += (CHAR_HEIGHT + LINE_PADDING) * FONT_SIZE;
 			ox = PADDING * FONT_SIZE;
-			str++;
 			continue ;
 		}
-		put_char(scene->info_img, *str, ox, oy);
+		put_char(scene->info_img, *cursor, ox, oy);
 		ox += (CHAR_WIDTH + CHAR_PADDING) * FONT_SIZE;
-		str++;
 	}
+	free(str);
 }

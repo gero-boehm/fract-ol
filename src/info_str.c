@@ -6,30 +6,18 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/18 16:12:18 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/18 16:20:00 by gbohm            ###   ########.fr       */
+/*   Updated: 2022/12/19 05:10:18 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <string.h>
+#include "libft.h"
 #include "fract_ol.h"
 
-
-
-
-
-
-// change intrinsic functions to libft functions
 static int	strcat2(char *src, char **dst)
 {
 	char	*new;
-	size_t	length;
 
-	length = strlen(*dst) + strlen(src);
-	new = calloc(length + 1, sizeof(char));
-	if (new == NULL)
-		return (1);
-	strcat(new, *dst);
-	strcat(new, src);
+	new = ft_strjoin(*dst, src);
 	free(*dst);
 	*dst = new;
 	return (new == NULL);
