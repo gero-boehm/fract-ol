@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/12 14:40:49 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/18 20:47:13 by gbohm            ###   ########.fr       */
+/*   Updated: 2023/01/11 18:26:10 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,54 +92,56 @@ typedef struct s_scene {
 	t_type		type;
 }	t_scene;
 
-int		setup_scene2(t_scene *scene);
-void	setup_hooks(t_scene *scene);
+int			setup_scene2(t_scene *scene);
+void		setup_hooks(t_scene *scene);
 
-t_vec2	vec2(double x, double y);
-t_vec2	vec2_add(t_vec2 v1, t_vec2 v2);
-t_vec2	vec2_sub(t_vec2 v1, t_vec2 v2);
-t_vec2	vec2_div_scalar(t_vec2 v, double s);
-t_vec2	vec2_mult_scalar(t_vec2 v, double s);
+t_vec2		vec2(double x, double y);
+t_vec2		vec2_add(t_vec2 v1, t_vec2 v2);
+t_vec2		vec2_sub(t_vec2 v1, t_vec2 v2);
+t_vec2		vec2_div_scalar(t_vec2 v, double s);
+t_vec2		vec2_mult_scalar(t_vec2 v, double s);
 
-t_vec2	mandelbrot(t_vec2 z, t_vec2 c);
-t_vec2	tricorn(t_vec2 z, t_vec2 c);
-t_vec2	burning_ship(t_vec2 z, t_vec2 c);
+t_vec2		mandelbrot(t_vec2 z, t_vec2 c);
+t_vec2		tricorn(t_vec2 z, t_vec2 c);
+t_vec2		burning_ship(t_vec2 z, t_vec2 c);
 
-t_vec2	complex_mult(t_vec2 z1, t_vec2 z2);
-t_vec2	complex_add(t_vec2 z1, t_vec2 z2);
-double	complex_modulus_squared(t_vec2 z);
+t_vec2		complex_mult(t_vec2 z1, t_vec2 z2);
+t_vec2		complex_add(t_vec2 z1, t_vec2 z2);
+double		complex_modulus_squared(t_vec2 z);
 
-void	on_loop(void *param);
-void	on_resize(int32_t width, int32_t height, void *param);
-void	on_scroll(double xdelta, double ydelta, void *param);
-void	on_keydown(mlx_key_data_t key, void *param);
+void		on_loop(void *param);
+void		on_resize(int32_t width, int32_t height, void *param);
+void		on_scroll(double xdelta, double ydelta, void *param);
+void		on_keydown(mlx_key_data_t key, void *param);
 
-void	color_pixel(t_scene *scene, int x, int y, int result);
+uint32_t	hue2rgb(float h);
 
-void	calculate(t_scene *scene);
-void	render_info(t_scene *scene);
+void		color_pixel(t_scene *scene, int x, int y, int result);
 
-int		malloc2(size_t size, char **str);
-int		dtoa2(double value, char **str);
-t_ops	ops(t_op re, t_op im);
-t_vec2	apply_op_double(double v, t_ops ops);
-t_vec2	apply_op_vec2(t_vec2 v, t_ops ops);
+void		calculate(t_scene *scene);
+void		render_info(t_scene *scene);
 
-void	update_uniforms(t_scene *scene);
+int			malloc2(size_t size, char **str);
+int			dtoa2(double value, char **str);
+t_ops		ops(t_op re, t_op im);
+t_vec2		apply_op_double(double v, t_ops ops);
+t_vec2		apply_op_vec2(t_vec2 v, t_ops ops);
 
-t_op	get_op_for_key(keys_t key);
+void		update_uniforms(t_scene *scene);
 
-void	update_iterations(t_scene *scene, int *rerender);
-void	update_time(t_scene *scene, int *rerender);
-void	update_mouse(t_scene *scene, int *rerender);
-void	update_ops(t_scene *scene, mlx_key_data_t key, int *rerender);
-void	update_settings(t_scene *scene, keys_t key, int *rerender);
+t_op		get_op_for_key(keys_t key);
 
-int		get_info_str2(t_scene *scene, char **str);
-int		get_rows(char *str);
-int		get_columns(char *str);
-char	*get_renderer(t_scene *scene);
-char	*get_op(t_op op);
-char	*get_type(t_scene *scene);
+void		update_iterations(t_scene *scene, int *rerender);
+void		update_time(t_scene *scene, int *rerender);
+void		update_mouse(t_scene *scene, int *rerender);
+void		update_ops(t_scene *scene, mlx_key_data_t key, int *rerender);
+void		update_settings(t_scene *scene, keys_t key, int *rerender);
+
+int			get_info_str2(t_scene *scene, char **str);
+int			get_rows(char *str);
+int			get_columns(char *str);
+char		*get_renderer(t_scene *scene);
+char		*get_op(t_op op);
+char		*get_type(t_scene *scene);
 
 #endif

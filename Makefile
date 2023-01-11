@@ -4,7 +4,7 @@ NAME=fractals
 SRC_DIR=src
 OBJ_DIR=_bin
 LIB_DIR=lib
-SRC=main.c color.c complex.c calculate.c hooks.c setup.c uniforms.c vec2.c info.c malloc2.c dtoa2.c ops.c update.c info_str.c info_utils.c
+SRC=main.c color.c complex.c calculate.c hooks.c hue2rgb.c setup.c uniforms.c vec2.c info.c malloc2.c dtoa2.c ops.c update.c info_str.c info_utils.c
 OBJ=$(addprefix _bin/, $(SRC:.c=.o))
 LIBS=MLX42/libmlx42.a -lglfw -L "/Users/$$USER/.brew/opt/glfw/lib/" -framework Cocoa -framework OpenGL -framework IOKit
 HEADERS=src/fract_ol.h

@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 12:42:19 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/18 14:21:43 by gbohm            ###   ########.fr       */
+/*   Updated: 2023/01/11 18:24:44 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,6 @@ void	color_pixel(t_scene *scene, int x, int y, int result)
 	uint32_t	color;
 
 	t = (double) result / (double) scene->iterations;
-	color = lerp_color(0x000000ff, 0xff0000ff, t);
+	color = lerp_color(0x000000ff, hue2rgb(scene->time), t);
 	set_color_at(scene->img->pixels + (y * scene->width + x) * 4, color);
 }
