@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 12:37:25 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/18 13:56:12 by gbohm            ###   ########.fr       */
+/*   Updated: 2023/01/12 10:46:12 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	setup_scene2(t_scene *scene)
 	scene->time = 0;
 	scene->mouse = vec2(.5, .5);
 	scene->offset = vec2(.5, .5);
-	scene->renderer = RENDERER_GPU_FLOAT;
+	scene->renderer = RENDERER_CPU;
 	scene->type = TYPE_MANDELBROT;
 	scene->fractal = ops(OP_NONE, OP_NONE);
 	scene->julia = ops(OP_NONE, OP_NONE);

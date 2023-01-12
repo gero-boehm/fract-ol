@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/17 15:22:28 by gbohm             #+#    #+#             */
-/*   Updated: 2023/01/12 09:03:07 by gbohm            ###   ########.fr       */
+/*   Updated: 2023/01/12 10:27:11 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,22 +40,6 @@ static t_op	eval_op(const char *str)
 	if (streq(str, "exp"))
 		return (OP_EXP);
 	return (OP_NONE);
-}
-
-static int	split2(const char *str, char c, char ***result)
-{
-	*result = ft_split(str, c);
-	return (*result == NULL);
-}
-
-static void	free_all(char **arr)
-{
-	char	**cursor;
-
-	cursor = arr;
-	while (*cursor)
-		free(*cursor++);
-	free(arr);
 }
 
 int	eval_ops(const char *str, t_ops *ops)
