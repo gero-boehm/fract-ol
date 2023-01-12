@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 12:48:13 by gbohm             #+#    #+#             */
-/*   Updated: 2022/12/18 16:03:48 by gbohm            ###   ########.fr       */
+/*   Updated: 2023/01/12 14:15:19 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,10 @@
 void	on_loop(void *param)
 {
 	t_scene	*scene;
-	mlx_t	*mlx;
 	int		rerender;
 
 	scene = param;
-	mlx = scene->mlx;
 	rerender = 0;
-	if (mlx_is_key_down(mlx, MLX_KEY_ESCAPE))
-		mlx_close_window(mlx);
 	update_iterations(scene, &rerender);
 	update_time(scene, &rerender);
 	update_mouse(scene, &rerender);
@@ -75,13 +71,16 @@ void	on_scroll(double xdelta, double ydelta, void *param)
 void	on_keydown(mlx_key_data_t key, void *param)
 {
 	t_scene	*scene;
-	mlx_t	*mlx;
 	int		rerender;
 
 	if (key.action != MLX_PRESS)
 		return ;
 	scene = param;
-	mlx = scene->mlx;
+	if (key.key == MLX_KEY_ESCAPE)
+	{
+		mlx_close_window(scene->mlx);
+		return ;
+	}
 	rerender = 0;
 	update_ops(scene, key, &rerender);
 	update_settings(scene, key.key, &rerender);

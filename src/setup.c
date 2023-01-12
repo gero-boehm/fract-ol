@@ -6,21 +6,16 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 12:37:25 by gbohm             #+#    #+#             */
-/*   Updated: 2023/01/12 10:46:12 by gbohm            ###   ########.fr       */
+/*   Updated: 2023/01/12 12:53:53 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fract_ol.h"
 
-int	setup_scene2(t_scene *scene)
+void	init_scene(t_scene *scene)
 {
-	scene->mlx = mlx_init(DEFAULT_WIDTH, DEFAULT_HEIGHT, "MLX42", true);
-	if (scene->mlx == NULL)
-		return (1);
-	scene->img = mlx_new_image(scene->mlx, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-	if (scene->img == NULL)
-		return (free(scene->mlx), 2);
-	mlx_image_to_window(scene->mlx, scene->img, 0, 0);
+	scene->mlx = NULL;
+	scene->img = NULL;
 	scene->info_img = NULL;
 	scene->width = DEFAULT_WIDTH;
 	scene->height = DEFAULT_HEIGHT;
@@ -34,6 +29,17 @@ int	setup_scene2(t_scene *scene)
 	scene->type = TYPE_MANDELBROT;
 	scene->fractal = ops(OP_NONE, OP_NONE);
 	scene->julia = ops(OP_NONE, OP_NONE);
+}
+
+int	init_mlx2(t_scene *scene)
+{
+	scene->mlx = mlx_init(DEFAULT_WIDTH, DEFAULT_HEIGHT, "fract-ol", true);
+	if (scene->mlx == NULL)
+		return (1);
+	scene->img = mlx_new_image(scene->mlx, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+	if (scene->img == NULL)
+		return (free(scene->mlx), 2);
+	mlx_image_to_window(scene->mlx, scene->img, 0, 0);
 	return (0);
 }
 
