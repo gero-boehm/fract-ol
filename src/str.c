@@ -1,0 +1,36 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   str.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/12 09:01:38 by gbohm             #+#    #+#             */
+/*   Updated: 2023/01/12 09:03:43 by gbohm            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+#include "fract_ol.h"
+
+int	streq(const char *s1, const char *s2)
+{
+	if (ft_strlen(s1) != ft_strlen(s2))
+		return (0);
+	while (*s1)
+	{
+		if (*s1++ != *s2++)
+			return (0);
+	}
+	return (1);
+}
+
+size_t	arrlen(char **arr)
+{
+	size_t	len;
+
+	len = 0;
+	while (arr[len])
+		len++;
+	return (len);
+}
