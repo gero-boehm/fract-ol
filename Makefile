@@ -1,6 +1,6 @@
 CC=cc
 CFLAGS=-Wall -Wextra -Werror -I MLX42/include -I include -I lib/libft -g
-NAME=fractals
+NAME=fractol
 SRC_DIR=src
 OBJ_DIR=_bin
 LIB_DIR=lib
@@ -10,19 +10,18 @@ LIBS=MLX42/libmlx42.a -lglfw -L "/Users/$$USER/.brew/opt/glfw/lib/" -framework C
 HEADERS=src/fract_ol.h
 
 all: $(NAME)
-	./$<
 
 $(OBJ_DIR):
-	mkdir $@
+	mkdir -p $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(HEADERS) | $(OBJ_DIR)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 $(LIB_DIR)/libft/libft.a:
-	$(shell cd $(LIB_DIR) && git clone https://github.com/gero-boehm/libft.git)
+	$(shell mkdir -p $(LIB_DIR) && cd $(LIB_DIR) && git clone https://github.com/gero-boehm/libft.git)
 	(cd $(LIB_DIR)/libft && make && make clean)
 
-$(NAME): $(OBJ) $(LIB_DIR)/libft/libft.a
+$(NAME): $(LIB_DIR)/libft/libft.a $(OBJ)
 	make -C MLX42 DEBUG=true
 	$(CC) $(CFLAGS) -o $(NAME) $^ $(LIBS)
 
@@ -30,6 +29,7 @@ clean:
 	rm -f $(OBJ)
 
 fclean: clean
+	make -C MLX42 fclean
 	rm -f $(NAME)
 
 re: fclean all

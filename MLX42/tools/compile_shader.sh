@@ -46,13 +46,8 @@ echo "const char* ${SHADERTYPE}_shader = \"$(sed -n '1{p;q;}' $1)\\n\""
 	# Skip over first line
 	read
 	while IFS= read -r LINE; do
-		if [ ! "${LINE}" = "" ]; then
-			if [ "${LINE}" = "}" ]; then
-				echo "	\"${LINE}\";"
-			else
-				echo "	\"${LINE}\""
-			fi
-		fi
+		echo "	\"${LINE}\n\""
 	done
+	echo ";"
 } < "$1"
 exit 0

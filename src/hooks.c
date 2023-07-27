@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/15 12:48:13 by gbohm             #+#    #+#             */
-/*   Updated: 2023/01/12 14:15:19 by gbohm            ###   ########.fr       */
+/*   Updated: 2023/07/27 21:46:33 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,8 @@ void	on_loop(void *param)
 void	on_resize(int32_t width, int32_t height, void *param)
 {
 	t_scene	*scene;
-	mlx_t	*mlx;
 
 	scene = param;
-	mlx = scene->mlx;
 	scene->width = width;
 	scene->height = height;
 	scene->aspect = (double) width / (double) height;
@@ -50,13 +48,11 @@ void	on_resize(int32_t width, int32_t height, void *param)
 void	on_scroll(double xdelta, double ydelta, void *param)
 {
 	t_scene	*scene;
-	mlx_t	*mlx;
 	double	step;
 	t_vec2	difference;
 
 	(void) xdelta;
 	scene = param;
-	mlx = scene->mlx;
 	step = (ydelta * scene->zoom) / 10.;
 	scene->zoom += step;
 	difference = vec2_sub(scene->mouse, scene->offset);

@@ -6,7 +6,7 @@
 /*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/12/17 16:40:30 by gbohm             #+#    #+#             */
-/*   Updated: 2023/01/12 14:20:09 by gbohm            ###   ########.fr       */
+/*   Updated: 2023/04/17 12:56:56 by gbohm            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,17 +48,17 @@ int32_t	main(int argc, const char **argv)
 	mlx_t	*mlx;
 
 	init_scene(&scene);
-	if (argc == 1 || parse(argc, argv, &scene))
+	if (argc == 1)
+		return (print_instructions(), 0);
+	if (parse(argc, argv, &scene))
 	{
-		if (argc != 1)
-			write(1, "failed to parse parameters.\n", 28);
-		print_instructions();
-		return (1);
+		write(1, "failed to parse parameters.\n", 28);
+		return (print_instructions(), 0);
 	}
 	if (init_mlx2(&scene))
 	{
 		write(1, "failed to instantiate scene.\n", 29);
-		return (2);
+		return (1);
 	}
 	setup_hooks(&scene);
 	mlx = scene.mlx;

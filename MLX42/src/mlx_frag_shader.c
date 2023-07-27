@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   mlx_frag_shader.c                                  :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: gbohm <gbohm@student.42.fr>                +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/02/17 22:34:59 by W2wizard          #+#    #+#             */
-/*   Updated: 2023/01/11 18:25:48 by gbohm            ###   ########.fr       */
+/*                                                        ::::::::            */
+/*   lol.c                                              :+:    :+:            */
+/*                                                     +:+                    */
+/*   By: W2wizard <lde-la-h@student.codam.nl>         +#+                     */
+/*                                                   +#+                      */
+/*   Created: 2022/02/17 22:34:59 by W2wizard      #+#    #+#                 */
+/*   Updated: 2022/02/17 22:34:59 by W2wizard      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "MLX42/MLX42_Int.h"
 
 const char* frag_shader = "#version 400\n"
+	"\n"
 	"precision highp double;\n"
 	"precision highp float;\n"
 	"in vec2 TexCoord;\n"
@@ -39,10 +40,10 @@ const char* frag_shader = "#version 400\n"
 	"\n"
 	"vec3 hue2rgb(float h)\n"
 	"{\n"
-	"	h = mod(h, 1.) * 360.;"
-	"	\n"
+	"	h = mod(h, 1.) * 360.;\n"
+	"\n"
 	"	float x = 1. - abs(mod(h / 60., 2.) - 1.);\n"
-	"	\n"
+	"\n"
 	"	if (h >= 0. && h < 60.)\n"
 	"		return vec3(1., x, 0.);\n"
 	"	if (h >= 60. && h < 120.)\n"
@@ -225,4 +226,5 @@ const char* frag_shader = "#version 400\n"
 	"	}\n"
 	"	vec3 color = mix(vec3(0., 0., 0.), hue2rgb(time), float(result) / float(iterations));\n"
 	"	FragColor = vec4(color, 1.0);\n"
-	"}\n";
+	"}\n"
+;
